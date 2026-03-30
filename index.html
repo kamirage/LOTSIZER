@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23000'/><text x='50' y='75' text-anchor='middle' font-size='80' font-family='Consolas, monospace' font-weight='bold' fill='%233b82f6'>$</text></svg>">
+<link rel="icon" type="image/svg+xml" href="image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23000'/><text x='50' y='75' text-anchor='middle' font-size='80' font-family='Consolas, monospace' font-weight='bold' fill='%233b82f6'>$</text></svg>">
 <title>FundingPips Risk Tool MT5</title>
 
 <style>
@@ -46,7 +46,6 @@ html, body {
   overflow-y: auto;
 }
 
-/* Мобильная адаптация */
 @media (max-width: 480px) {
   .app {
     width: 95%;
@@ -56,42 +55,14 @@ html, body {
     max-height: 90vh;
   }
   
-  h1 {
-    font-size: 16px;
-    margin-bottom: 12px;
-  }
-  
-  input, select {
-    padding: 14px;
-    font-size: 14px;
-  }
-  
-  .lot {
-    font-size: 32px;
-  }
-  
-  .result {
-    padding: 12px;
-  }
-  
-  .quick-actions {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
-  }
-  
-  .quick-btn {
-    padding: 6px;
-    font-size: 11px;
-  }
-  
-  .risk-selector {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  
-  .risk-btn {
-    padding: 10px 8px;
-    font-size: 11px;
-  }
+  h1 { font-size: 16px; margin-bottom: 12px; }
+  input, select { padding: 14px; font-size: 14px; }
+  .lot { font-size: 32px; }
+  .result { padding: 12px; }
+  .quick-actions { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .quick-btn { padding: 6px; font-size: 11px; }
+  .risk-selector { grid-template-columns: repeat(3, 1fr); }
+  .risk-btn { padding: 10px 8px; font-size: 11px; }
 }
 
 h1 {
@@ -128,7 +99,6 @@ input:focus, select:focus {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
 }
 
-/* Кнопки быстрого доступа */
 .quick-actions {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -159,7 +129,6 @@ input:focus, select:focus {
   background: rgba(255, 255, 255, 0.2);
 }
 
-/* Селектор риска */
 .risk-selector {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -196,7 +165,6 @@ input:focus, select:focus {
   box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
 }
 
-/* Результат */
 .result {
   margin-top: 18px;
   padding: 16px;
@@ -225,7 +193,6 @@ input:focus, select:focus {
   margin-top: 2px;
 }
 
-/* История */
 .history-btn {
   width: 100%;
   margin-top: 8px;
@@ -243,33 +210,17 @@ input:focus, select:focus {
   background: rgba(255, 255, 255, 0.1);
 }
 
-/* Анимация появления */
 @keyframes fadeIn {
   from { opacity: 0; transform: translate(-50%, -50%) scale(0.95); }
   to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 }
 
-.app {
-  animation: fadeIn 0.4s ease-out;
-}
+.app { animation: fadeIn 0.4s ease-out; }
 
-/* Скроллбар */
-.app::-webkit-scrollbar {
-  width: 6px;
-}
-
-.app::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.5);
-}
-
-.app::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
-}
-
-.app::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
+.app::-webkit-scrollbar { width: 6px; }
+.app::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.5); }
+.app::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 3px; }
+.app::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
 </style>
 </head>
 
@@ -307,6 +258,7 @@ input:focus, select:focus {
     </optgroup>
     <optgroup label="INDICES"><option>GER40</option></optgroup><option>US100</option>
     <optgroup label="METALS"><option>XAUUSD</option><option>XAGUSD</option></optgroup>
+    <optgroup label="ENERGY"><option>USOIL</option></optgroup>
     <optgroup label="CRYPTO"><option>ETHUSD</option></optgroup>
   </select>
 
@@ -319,12 +271,11 @@ input:focus, select:focus {
   <label>Take Profit (необязательно)</label>
   <input id="tp" type="number" step="any" placeholder="Цена тейка" autocomplete="new-password">
 
-  <!-- Кнопки быстрого доступа - ТОЛЬКО ВЫБОР АКТИВА -->
   <div class="quick-actions">
     <div class="quick-btn" onclick="selectAsset('EURUSD')">EURUSD</div>
     <div class="quick-btn" onclick="selectAsset('XAUUSD')">XAUUSD</div>
     <div class="quick-btn" onclick="selectAsset('GER40')">GER40</div>
-    <div class="quick-btn" onclick="selectAsset('ETHUSD')">ETHUSD</div>
+    <div class="quick-btn" onclick="selectAsset('USOIL')">USOIL</div>
   </div>
 
   <div id="out" class="result">
@@ -335,7 +286,6 @@ input:focus, select:focus {
 </div>
 
 <script>
-/* ===== TESLA LIGHTNING BACKGROUND ===== */
 class LightningEffect {
   constructor(c) {
     this.c = c;
@@ -398,7 +348,6 @@ class LightningEffect {
 
 new LightningEffect(document.getElementById("canvas-bg"));
 
-// ===== SAVE / LOAD LAST SETTINGS =====
 const assetSelect = document.getElementById("asset");
 const balanceSelect = document.getElementById("balance");
 const riskInput = document.getElementById("risk");
@@ -406,7 +355,6 @@ const entryInput = document.getElementById("entry");
 const stopInput = document.getElementById("stop");
 const tpInput = document.getElementById("tp");
 
-// Загрузка сохраненных значений (ТОЛЬКО для баланса, риска и актива)
 const savedAsset = localStorage.getItem("lastAsset");
 const savedBalance = localStorage.getItem("lastBalance");
 const savedRisk = localStorage.getItem("lastRisk");
@@ -418,15 +366,12 @@ if (savedRisk) {
   updateRiskButtons(savedRisk);
 }
 
-// Очищаем поля ввода ПОСЛЕ загрузки сохраненных настроек
 entryInput.value = "";
 stopInput.value = "";
 tpInput.value = "";
 
-// Событие при смене актива - ОЧИЩАЕМ ПОЛЯ
 assetSelect.addEventListener("change", () => {
   localStorage.setItem("lastAsset", assetSelect.value);
-  // Очищаем поля при смене актива
   entryInput.value = "";
   stopInput.value = "";
   tpInput.value = "";
@@ -447,7 +392,6 @@ riskInput.addEventListener("input", () => {
   }
 });
 
-// Обновление кнопок риска
 function updateRiskButtons(value) {
   const buttons = document.querySelectorAll('.risk-btn');
   buttons.forEach(btn => btn.classList.remove('active'));
@@ -461,18 +405,13 @@ function updateRiskButtons(value) {
   }
 }
 
-/* ===== SELECT ASSET FUNCTIONS - БЕЗ АВТОЗАПОЛНЕНИЯ ===== */
 function selectAsset(pair) {
   const asset = document.getElementById("asset");
-  
   asset.value = pair;
   localStorage.setItem("lastAsset", pair);
-  
-  // Очищаем поля - НИКАКОГО АВТОЗАПОЛНЕНИЯ!
   entryInput.value = "";
   stopInput.value = "";
   tpInput.value = "";
-  
   calc();
 }
 
@@ -480,17 +419,12 @@ function setRisk(risk) {
   riskInput.value = risk;
   localStorage.setItem("lastRisk", risk);
   
-  // Обновляем активную кнопку
   const buttons = document.querySelectorAll('.risk-btn');
   buttons.forEach(btn => btn.classList.remove('active'));
-  
   event.target.classList.add('active');
-  
   calc();
 }
 
-/* ===== CALCULATION LOGIC WITH DEBOUNCE ===== */
-const ids = ["balance", "risk", "asset", "entry", "stop", "tp"];
 let calcTimeout;
 
 function debouncedCalc() {
@@ -498,32 +432,29 @@ function debouncedCalc() {
   calcTimeout = setTimeout(calc, 300);
 }
 
-// Подключаем события (кроме риска, который уже обрабатывается)
 ["balance", "asset", "entry", "stop", "tp"].forEach(id => {
   document.getElementById(id).addEventListener("input", debouncedCalc);
   document.getElementById(id).addEventListener("change", calc);
 });
 
-// ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ДЛЯ РАСЧЁТА (НОВЫЕ) =====
+// ===== ИСПРАВЛЕННЫЕ ФУНКЦИИ ДЛЯ USOIL =====
 
 function getPipSize(asset) {
   if (asset.includes('JPY')) return 0.01;
   if (['XAUUSD', 'XAGUSD', 'GER40', 'ETHUSD'].includes(asset)) return 1;
+  if (asset === 'USOIL') return 0.01; // ← Цена в центах (0.01)
   return 0.0001;
 }
 
 function getPipValue(asset, price) {
-  // Прямые пары (USD второй)
   if (['EURUSD', 'GBPUSD', 'AUDUSD', 'NZDUSD'].includes(asset)) return 10;
-  // Обратные пары (USD первый) — КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ
   if (['USDCAD', 'USDCHF'].includes(asset)) return 10 / price;
-  // JPY пары
   if (['USDJPY', 'EURJPY', 'GBPJPY'].includes(asset)) return 1000 / price;
-  // Остальные
   if (asset === 'XAUUSD') return 100;
   if (asset === 'XAGUSD') return 5000;
   if (asset === 'GER40') return 25;
   if (asset === 'ETHUSD') return 1;
+  if (asset === 'USOIL') return 10; // ← 1 лот = 10 баррелей
   return 10;
 }
 
@@ -533,10 +464,9 @@ function getContractSize(asset) {
   if (asset === 'XAGUSD') return 5000;
   if (asset === 'GER40') return 25;
   if (asset === 'ETHUSD') return 1;
+  if (asset === 'USOIL') return 10; // ← 10 баррелей
   return 100000;
 }
-
-// ===== ОБНОВЛЁННАЯ ФУНКЦИЯ calc() =====
 
 function calc() {
   const out = document.getElementById("out");
@@ -547,7 +477,6 @@ function calc() {
   const tpv = +document.getElementById("tp").value;
   const a = document.getElementById("asset").value;
 
-  // Валидация
   if (riskP < 0.1 || riskP > 10) {
     out.innerHTML = "<div class='small' style='color:#ef4444'>Риск должен быть от 0.1% до 10%</div>";
     return;
@@ -560,16 +489,13 @@ function calc() {
     return;
   }
 
-  // ===== НОВАЯ ЛОГИКА РАСЧЁТА =====
   const distance = Math.abs(e - s);
   const pipSize = getPipSize(a);
   const stopPips = distance / pipSize;
-  const pipValue = getPipValue(a, e); // ← динамический расчёт!
+  const pipValue = getPipValue(a, e);
   
-  // Основная формула: Lot = Risk / (StopPips × PipValue)
   const lot = Math.floor((riskUsd / (stopPips * pipValue)) * 100) / 100;
 
-  // Расчёт стоимости позиции
   const contractSize = getContractSize(a);
   let posUsd = 0;
   
@@ -585,9 +511,10 @@ function calc() {
     posUsd = lot * 25 * e;
   } else if (a === 'ETHUSD') {
     posUsd = lot * e;
+  } else if (a === 'USOIL') {
+    posUsd = lot * 10 * e;
   }
 
-  // R:R и прибыль
   let rrHTML = "";
   if (tpv) {
     const tpPips = Math.abs(tpv - e) / pipSize;
@@ -599,7 +526,6 @@ function calc() {
     `;
   }
 
-  // Вывод результата (твой формат)
   out.innerHTML = `
     <div class="lot ok">${lot.toFixed(2)}</div>
     <div class="small">LOT SIZE</div>
@@ -611,21 +537,15 @@ function calc() {
   saveHistory(lot.toFixed(2));
 }
 
-// Инициализация - очищаем поля при загрузке страницы
 window.addEventListener('load', () => {
-  // Убеждаемся, что поля пустые
   entryInput.value = "";
   stopInput.value = "";
   tpInput.value = "";
   
-  // Автофокус только на десктопе
   if (!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-    setTimeout(() => {
-      entryInput.focus();
-    }, 500);
+    setTimeout(() => { entryInput.focus(); }, 500);
   }
   
-  // Дополнительная очистка через короткую задержку
   setTimeout(() => {
     entryInput.value = "";
     stopInput.value = "";
@@ -633,7 +553,6 @@ window.addEventListener('load', () => {
   }, 100);
 });
 
-/* ===== HISTORY FUNCTIONS ===== */
 function saveHistory(lot) {
   const entry = entryInput.value;
   const stop = stopInput.value;
@@ -653,7 +572,6 @@ function saveHistory(lot) {
     risk: risk
   };
   
-  // Проверяем, не дублируется ли запись
   const isDuplicate = history.some(item => 
     item.entry === newItem.entry && 
     item.stop === newItem.stop && 
@@ -686,15 +604,10 @@ function showHistory() {
   alert(message);
 }
 
-/* ===== MOBILE OPTIMIZATIONS ===== */
-// Запрет масштабирования на мобильных
 document.addEventListener('touchmove', function(event) {
-  if (event.scale !== 1) {
-    event.preventDefault();
-  }
+  if (event.scale !== 1) { event.preventDefault(); }
 }, { passive: false });
 
-// Предотвращение случайного закрытия клавиатуры
 document.querySelectorAll('input').forEach(input => {
   input.addEventListener('focus', function() {
     this.scrollIntoView({ behavior: 'smooth', block: 'center' });
