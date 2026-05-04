@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23000'/><text x='50' y='75' text-anchor='middle' font-size='80' font-family='Consolas, monospace' font-weight='bold' fill='%233b82f6'>$</text></svg>">
+<link rel="icon" type="image/svg+xml" href="image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23000'/><text x='50' y='75' text-anchor='middle' font-size='80' font-family='Consolas, monospace' font-weight='bold' fill='%233b82f6'>$</text></svg>">
 <title>FundingPips Risk Tool MT5</title>
 
 <style>
@@ -613,6 +613,110 @@ document.querySelectorAll('input').forEach(input => {
     this.scrollIntoView({ behavior: 'smooth', block: 'center' });
   });
 });
+
+// ===== ИСПРАВЛЕННЫЕ ФУНКЦИИ =====
+
+function getPipSize(asset) {
+  if (asset.includes('JPY')) return 0.01;
+  if (['XAUUSD', 'XAGUSD', 'GER40', 'ETHUSD', 'US100'].includes(asset)) return 1;
+  if (asset === 'USOIL') return 0.01;
+  return 0.0001;
+}
+
+function getPipValue(asset, price) {
+  if (['EURUSD', 'GBPUSD', 'AUDUSD', 'NZDUSD'].includes(asset)) return 10;
+  if (['USDCAD', 'USDCHF'].includes(asset)) return 10 / price;
+  if (['USDJPY', 'EURJPY', 'GBPJPY'].includes(asset)) return 1000 / price;
+  if (asset === 'XAUUSD') return 100;
+  if (asset === 'XAGUSD') return 5000;
+  if (asset === 'GER40') return 25;
+  if (asset === 'US100') return 20; // ✅ ВОТ ОНО
+  if (asset === 'ETHUSD') return 1;
+  if (asset === 'USOIL') return 10;
+  return 10;
+}
+
+function getContractSize(asset) {
+  if (['EURUSD','GBPUSD','USDCAD','USDCHF','USDJPY','EURJPY','GBPJPY','AUDUSD','NZDUSD'].includes(asset)) return 100000;
+  if (asset === 'XAUUSD') return 100;
+  if (asset === 'XAGUSD') return 5000;
+  if (asset === 'GER40') return 25;
+  if (asset === 'US100') return 1; // ✅ FIX
+  if (asset === 'ETHUSD') return 1;
+  if (asset === 'USOIL') return 10;
+  return 100000;
+}
+
+function calc() {
+  const out = document.getElementById("out");
+  const bal = +document.getElementById("balance").value;
+  const riskP = +document.getElementById("risk").value;
+  const e = +document.getElementById("entry").value;
+  const s = +document.getElementById("stop").value;
+  const tpv = +document.getElementById("tp").value;
+  const a = document.getElementById("asset").value;
+
+  if (riskP < 0.1 || riskP > 10) {
+    out.innerHTML = "<div class='small' style='color:#ef4444'>Риск должен быть от 0.1% до 10%</div>";
+    return;
+  }
+
+  const riskUsd = bal * (riskP / 100);
+
+  if (!e || !s || e === s) {
+    out.innerHTML = "<div class='small'>Введите Entry и Stop Loss</div>";
+    return;
+  }
+
+  const distance = Math.abs(e - s);
+  const pipSize = getPipSize(a);
+  const stopPips = distance / pipSize;
+  const pipValue = getPipValue(a, e);
+  
+  const lot = Math.floor((riskUsd / (stopPips * pipValue)) * 100) / 100;
+
+  const contractSize = getContractSize(a);
+  let posUsd = 0;
+  
+  if (['EURUSD','GBPUSD','AUDUSD','NZDUSD','USDCAD','USDCHF'].includes(a)) {
+    posUsd = lot * contractSize * e;
+  } else if (['USDJPY','EURJPY','GBPJPY'].includes(a)) {
+    posUsd = lot * contractSize;
+  } else if (a === 'XAUUSD') {
+    posUsd = lot * 100 * e;
+  } else if (a === 'XAGUSD') {
+    posUsd = lot * 5000 * e;
+  } else if (a === 'GER40') {
+    posUsd = lot * 25 * e;
+  } else if (a === 'US100') {
+    posUsd = lot * e; // ✅ FIX
+  } else if (a === 'ETHUSD') {
+    posUsd = lot * e;
+  } else if (a === 'USOIL') {
+    posUsd = lot * 10 * e;
+  }
+
+  let rrHTML = "";
+  if (tpv) {
+    const tpPips = Math.abs(tpv - e) / pipSize;
+    const rr = (tpPips / stopPips).toFixed(2);
+    const profit = riskUsd * tpPips / stopPips;
+    rrHTML = `
+      <div class="small">RR 1:${rr}</div>
+      <div class="small">Potential Profit $${Math.round(profit).toLocaleString()}</div>
+    `;
+  }
+
+  out.innerHTML = `
+    <div class="lot ok">${lot.toFixed(2)}</div>
+    <div class="small">LOT SIZE</div>
+    <div class="small">Position $${Math.round(posUsd).toLocaleString()}</div>
+    <div class="small">Risk $${Math.round(riskUsd).toLocaleString()}</div>
+    ${rrHTML}
+  `;
+}
+
+
 </script>
 
 </body>
